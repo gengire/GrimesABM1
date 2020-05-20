@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
         listHashMap = new HashMap<>();
 
         listDataHeader.add("Transfer Courses");
-        listDataHeader.add("Term 1");
-        listDataHeader.add("Term 2");
-        listDataHeader.add("Term 3");
-        listDataHeader.add("Term 4");
+        listDataHeader.add("Term 1   |   October 1, 2018 to March 31, 2019");
+        listDataHeader.add("Term 2   |   April 1, 2019 to September 30, 2019");
+        listDataHeader.add("Term 3   |   October 1, 2019 to March 31, 2020");
+        listDataHeader.add("Term 4   |   April 1, 2020 to September 30, 2020");
 
         List<String> transferCourses = new ArrayList<>();
         List<String> term1 = new ArrayList<>();
