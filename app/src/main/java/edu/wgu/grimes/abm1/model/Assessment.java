@@ -1,10 +1,10 @@
-package edu.wgu.grimes.abm1;
+package edu.wgu.grimes.abm1.model;
 
 import java.util.Date;
 
 public class Assessment {
     String title;
-    AssessmentType assessmentType;
+    ASSESSMENT_TYPE assessmentType;
     STATUS.ASSESSMENT status;
     Date goal;
     boolean alert;
