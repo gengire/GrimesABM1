@@ -14,12 +14,10 @@ import java.util.List;
 class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private final List<ListHeader> listHeaders;
-    private final HashMap<String, List<String>> listHashMap;
 
-    public ExpandableListAdapter(Context context, List<ListHeader> listHeaders, HashMap<String, List<String>> listHashMap) {
+    public ExpandableListAdapter(Context context, List<ListHeader> listHeaders) {
         this.context = context;
         this.listHeaders = listHeaders;
-        this.listHashMap = listHashMap;
     }
 
     @Override
@@ -29,7 +27,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return listHashMap.get(listHeaders.get(groupPosition).getHeaderText()).size();
+        return listHeaders.get(groupPosition).getCourses().size();
     }
 
     @Override
@@ -39,7 +37,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return listHashMap.get(listHeaders.get(groupPosition).getHeaderText()).get(childPosition);
+        return listHeaders.get(groupPosition).getCourses().get(childPosition).getHeaderText();
     }
 
     @Override

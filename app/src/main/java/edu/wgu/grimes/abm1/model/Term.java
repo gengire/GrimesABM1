@@ -6,10 +6,15 @@ import java.util.List;
 import edu.wgu.grimes.abm1.ListHeader;
 
 public class Term implements ListHeader {
+    private String guid;
     private int number;
     private String startDate;
     private String endDate;
     private List<Course> courses = new ArrayList<>();
+
+    public Term() {
+        // empty
+    }
 
     public Term(int number, String startDate, String endDate) {
         this.number = number;
@@ -31,9 +36,11 @@ public class Term implements ListHeader {
         return stringCourseList;
     }
 
-    public int getNumber() {
-        return number;
-    }
+    public String getGuid() { return this.guid; }
+
+    public void setGuid(String guid) { this.guid = guid; }
+
+    public int getNumber() { return number; }
 
     public void setNumber(int number) {
         this.number = number;

@@ -6,35 +6,36 @@ import android.os.Bundle;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 
 import edu.wgu.grimes.abm1.model.Course;
 import edu.wgu.grimes.abm1.model.Term;
 import edu.wgu.grimes.abm1.model.Transfers;
+import edu.wgu.grimes.abm1.util.DBHelper;
 import edu.wgu.grimes.abm1.util.TermBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
+    DBHelper termsDb;
     private List<ListHeader> listHeaders;
-    private HashMap<String, List<String>> listHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        termsDb = new DBHelper(this, null, null, 1);
+
         setContentView(R.layout.activity_main);
 
         ExpandableListView listView = findViewById(R.id.lvExp);
+        listHeaders = new ArrayList<>();
         initData();
-        ExpandableListAdapter listAdapter = new ExpandableListAdapter(this, listHeaders, listHashMap);
+        ExpandableListAdapter listAdapter = new ExpandableListAdapter(this, listHeaders);
         listView.setAdapter(listAdapter);
 
     }
 
     private void initData() {
-        listHeaders = new ArrayList<>();
-        listHashMap = new HashMap<>();
+
 
         Transfers transfers = new Transfers("Course Transfers");
         transfers.getCourses().add(new Course("Introduction to Geography", "C255"));
@@ -65,11 +66,13 @@ public class MainActivity extends AppCompatActivity {
         Term term4= termBuilder.build();
         listHeaders.add(term4);
 
-        listHashMap.put(transfers.getHeaderText(), transfers.getCourseList());
-        listHashMap.put(term1.getHeaderText(), term1.getCourseList());
-        listHashMap.put(term2.getHeaderText(), term2.getCourseList());
-        listHashMap.put(term3.getHeaderText(), term3.getCourseList());
-        listHashMap.put(term4.getHeaderText(), term4.getCourseList());
+        Term term = termsDb.selectTerm(5);
+//        termsDb.deleteTerm(term.getGuid());
+        if (term == null) {
+            termsDb.insertTerm(5, "October 1, 2020", "March 31, 2021");
+        }
+//        termsDb.updateTerm(term.getGuid(), term.getNumber(), term.getStartDate(), "March 31, 2021");
+        listHeaders.add(termsDb.selectTerm(5));
 
         }
 }
