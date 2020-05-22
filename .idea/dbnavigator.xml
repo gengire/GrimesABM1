@@ -23,20 +23,32 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="44adb698-85c4-4be5-9169-ffc7d5c5c35a">
+        <schema name="main" object-types="view, index, dataset trigger, column, table, constraint" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="44adb698-85c4-4be5-9169-ffc7d5c5c35a">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from abm1_terms;]]></console>
+      <console name="Connection" type="STANDARD" schema="main" session="Main">select * from abm1_terms;</console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="44adb698-85c4-4be5-9169-ffc7d5c5c35a" object-ref="schemas/main/tables/abm1_courses" />
+      <object connection-id="44adb698-85c4-4be5-9169-ffc7d5c5c35a" object-ref="schemas/main/tables/abm1_terms" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="44adb698-85c4-4be5-9169-ffc7d5c5c35a" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="44adb698-85c4-4be5-9169-ffc7d5c5c35a" dataset="main.abm1_courses" active-filter-id="EMPTY_FILTER">
+      <filter id="de0c2b46-484e-429c-a075-a905560d0895" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="course_id" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
     <filter-actions connection-id="44adb698-85c4-4be5-9169-ffc7d5c5c35a" dataset="main.abm1_terms" active-filter-id="b20cd430-4653-49f2-81a3-8aacda799bf9">
       <filter id="b20cd430-4653-49f2-81a3-8aacda799bf9" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>

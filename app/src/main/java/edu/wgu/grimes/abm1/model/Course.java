@@ -3,23 +3,32 @@ package edu.wgu.grimes.abm1.model;
 import java.util.List;
 
 public class Course {
+    private String guid;
     private String title;
     private String code;
     private String startDate;
     private String anticipatedEndDate;
     private STATUS.COURSE status;
+
+    private String termId;
     private List<Mentor> mentors;
     private List<Assessment> assessments;
     private List<String> notes;
+
+    public Course() {
+        // empty
+    }
 
     public Course(String title, String code) {
         this.title = title;
         this.code = code;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getGuid() { return guid; }
+
+    public void setGuid(String guid) { this.guid = guid; }
+
+    public String getTitle() { return title; }
 
     public void setTitle(String title) {
         this.title = title;
@@ -55,6 +64,14 @@ public class Course {
 
     public void setStatus(STATUS.COURSE status) {
         this.status = status;
+    }
+
+    public String getTermId() {
+        return termId;
+    }
+
+    public void setTermId(String termId) {
+        this.termId = termId;
     }
 
     public List<Mentor> getMentors() {

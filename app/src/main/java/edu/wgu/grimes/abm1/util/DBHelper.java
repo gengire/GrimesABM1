@@ -1,148 +1,85 @@
 package edu.wgu.grimes.abm1.util;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
+import edu.wgu.grimes.abm1.dao.CourseDao;
+import edu.wgu.grimes.abm1.dao.TermDao;
+import edu.wgu.grimes.abm1.model.Course;
+import edu.wgu.grimes.abm1.model.STATUS;
 import edu.wgu.grimes.abm1.model.Term;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "abm1.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_TERMS = "abm1_terms";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_NUMBER = "number";
-    private static final String COLUMN_START_DATE = "start_date";
-    private static final String COLUMN_END_DATE = "end_date";
 
-
+    private TermDao termDao;
+    private CourseDao courseDao;
 
 
     public DBHelper(@Nullable Context context, String name,
                     SQLiteDatabase.CursorFactory factory, int version) {
             super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+            initDaos();
+    }
+
+    private void initDaos() {
+        termDao = new TermDao(this);
+        courseDao = new CourseDao(this);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("create table ");
-        sb.append(TABLE_TERMS).append(" ");
-        sb.append("(");
-        sb.append(COLUMN_ID).append(" TEXT PRIMARY KEY, ");
-        sb.append(COLUMN_NUMBER).append(" INTEGER UNIQUE, ");
-        sb.append(COLUMN_START_DATE).append(" TEXT, ");
-        sb.append(COLUMN_END_DATE).append(" TEXT");
-        sb.append(")");
-
-        db.execSQL(sb.toString());
+        termDao.createTable(db);
+        courseDao.createTable(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TERMS);
+        termDao.dropTable(db);
+        courseDao.dropTable(db);
         onCreate(db);
     }
 
-    public boolean insertTerm(int number, String startDate, String endDate) {
-        long result = -1;
-
-        if (selectTerm(number) == null) {
-            try (SQLiteDatabase db = this.getWritableDatabase()) {
-                String id = genGuid();
-                ContentValues cv = new ContentValues();
-                cv.put(COLUMN_ID, id);
-                cv.put(COLUMN_NUMBER, number);
-                cv.put(COLUMN_START_DATE, startDate);
-                cv.put(COLUMN_END_DATE, endDate);
-                result = db.insert(TABLE_TERMS, null, cv);
-            }
+    public Term selectTerm(int number) {
+        Term term = termDao.selectByTermNumber(number);
+        if (term != null) {
+            term.getCourses().addAll(courseDao.selectCoursesByTermId(term.getGuid()));
         }
-        return result != -1;
+        return term;
+
+    }
+
+    public String insertTerm(int number, String startDate, String endDate) {
+        return termDao.insert(number, startDate, endDate);
     }
 
     public boolean updateTerm(String id, int number, String startDate, String endDate) {
-        long result = -1;
-
-        if (selectTerm(id) != null) {
-            try (SQLiteDatabase db = this.getWritableDatabase()) {
-                ContentValues cv = new ContentValues();
-                cv.put(COLUMN_NUMBER, number);
-                cv.put(COLUMN_START_DATE, startDate);
-                cv.put(COLUMN_END_DATE, endDate);
-                result = db.update(TABLE_TERMS, cv, COLUMN_ID + " = ?", new String[] {id});
-            }
-        }
-        return result != -1;
-    }
-
-    public Term selectTerm(int number) {
-        String query = "select * from " + TABLE_TERMS + " where " + COLUMN_NUMBER + " = ?";
-        Term term = null;
-        try (SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(number)})) {
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                term = new Term();
-                term.setGuid(cursor.getString(0));
-                term.setNumber(cursor.getInt(1));
-                term.setStartDate(cursor.getString(2));
-                term.setEndDate(cursor.getString(3));
-            }
-        }
-        return term;
-    }
-
-    public Term selectTerm(String guid) {
-        String query = "select * from " + TABLE_TERMS + " where " + COLUMN_ID + " = ?";
-        Term term = null;
-        try (SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, new String[] {guid})) {
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                term = new Term();
-                term.setGuid(cursor.getString(0));
-                term.setNumber(cursor.getInt(1));
-                term.setStartDate(cursor.getString(2));
-                term.setEndDate(cursor.getString(3));
-            }
-        }
-        return term;
+        return termDao.update(id, number, startDate, endDate) != -1;
     }
 
     public boolean deleteTerm(String guid) {
-        boolean result = false;
-        if (selectTerm(guid) != null) {
-            try (SQLiteDatabase db = this.getWritableDatabase()) {
-                db.delete(TABLE_TERMS, COLUMN_ID + " = ?", new String[] {guid});
-            }
-            result = true;
-        }
-        return result;
+        return termDao.deleteById(guid);
     }
 
-    public boolean deleteTerm(int number) {
-        boolean result = false;
-        if (selectTerm(number) != null) {
-            try (SQLiteDatabase db = this.getWritableDatabase()) {
-                db.delete(TABLE_TERMS, COLUMN_NUMBER + " = ?", new String[] {String.valueOf(number)});
-            }
-            result = true;
-        }
-        return result;
+    public void deleteTerm(int number) {
+        termDao.deleteTermByNumber(number);
     }
 
-    private String genGuid() {
-        UUID uuid = UUID.randomUUID();
-        String randomGuid = uuid.toString().replace("-","");
-        return randomGuid;
+
+    public Course selectCourse(String guid) {
+        return courseDao.selectByCourseId(guid);
+    }
+
+    public boolean insertCourse(String title, String code, String startDate, String endDate, STATUS.COURSE status, String termId) {
+        return courseDao.insert(title, code, startDate, endDate, status, termId) != -1;
     }
 
 }
